@@ -34,6 +34,12 @@ globalKeys = gears.table.join(
   awful.key({ modkey, }, "Right", awful.tag.viewnext,
     { description = "view next", group = "tag" }),
 
+  -- Toggle top_panel's visibility
+  awful.key({ modkey, 'Shift' }, "t", function()
+    local s = awful.screen.focused()
+    s.top_panel.visible = not s.top_panel.visible
+  end, { description = "Toggle top_panel visibility", group = "awesome" }),
+
   -- Open rofi launcher
   awful.key({ 'Mod1' }, "o", function() awful.spawn('rofi -show drun -show-icons') end,
     { description = "open rofi", group = "launcher" }),
