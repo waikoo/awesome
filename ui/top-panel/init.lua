@@ -3,6 +3,7 @@ local beautiful = require('beautiful')
 local wibox = require('wibox')
 local gears = require('gears')
 local volume_widget = require('awesome-wm-widgets.volume-widget.volume')
+local bluetooth = require('gobo.awesome.bluetooth')
 
 configuration = require('configuration.config')
 require('widgets.top-panel')
@@ -46,6 +47,7 @@ local TopPanel = function(s)
     {             -- Right widgets
       layout = wibox.layout.fixed.horizontal,
       mykeyboardlayout,
+      -- bluetooth.new(),
       volume_widget {
         widget_type = 'arc'
       },

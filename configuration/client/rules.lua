@@ -31,6 +31,8 @@ awful.rules.rules = {
         "DTA",   -- Firefox addon DownThemAll.
         "copyq", -- Includes session name in class.
         "pinentry",
+        "kruler",
+        "yad"
       },
       class = {
         "Arandr",
@@ -42,6 +44,7 @@ awful.rules.rules = {
         "Tor Browser", -- Needs a fixed window size to avoid fingerprinting by screen size.
         "Wpa_gui",
         "veromix",
+        "yad",
         "xtightvncviewer" },
 
       -- Note that the name property shown in xprop might be set slightly after creation of the client

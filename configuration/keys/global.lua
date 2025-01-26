@@ -77,11 +77,12 @@ globalKeys = gears.table.join(
   awful.key({ modkey }, "#88", function()
       awful.spawn.with_shell("pactl set-default-sink bluez_output.60_C5_E6_42_F0_88.1")
     end,
-    { description = "select headphones as sink", group = "scripts" }),
+    { description = "select skullcandy as sink", group = "scripts" }),
+
   awful.key({ modkey }, "#89", function()
-      awful.spawn.with_shell("bluetoothctl connect 60:C5:E6:42:F0:88")
+      awful.spawn.with_shell("pactl set-default-sink bluez_output.00_A4_1C_45_B0_4E.1")
     end,
-    { description = "connect to headphones", group = "scripts" }),
+    { description = "set sony as sink", group = "scripts" }),
 
   awful.key({ modkey }, "7", switch_to_tag("1"),
     { description = "Switch to tag 1", group = "tag" }),
@@ -225,9 +226,24 @@ globalKeys = gears.table.join(
   awful.key({ modkey, }, "e", function() awful.spawn("thunar") end,
     { description = "open thunar", group = "launcher" }),
 
+  -- Numpad to Mouse
+  awful.key({ modkey, }, "#90", function() awful.spawn("/home/waikoo/bin/numpad_to_mouse.sh") end,
+    { description = "numpad to mouse", group = "launcher" }),
+
+  -- Reset rate
+  awful.key({ modkey, }, "Insert", function() awful.spawn("/home/waikoo/bin/reset-rate.sh") end,
+    { description = "reset rate", group = "launcher" }),
+
+  -- Measuring script
+  awful.key({ modkey, }, "`", function() awful.spawn("/home/waikoo/bin/crosshair-tool.sh") end,
+    { description = "open measuring tool", group = "launcher" }),
+
   awful.key({ modkey, "Control" }, "r", awesome.restart,
     { description = "reload awesome", group = "awesome" }),
 
+  -- flameshot
+  awful.key({}, "Print", function() awful.util.spawn("flameshot gui") end),
+  -- awful.key({ Alt_L }, "<", function() awful.util.spawn("flameshot gui --pin --accept-on-select") end),
   awful.key({ modkey, controlkey }, "q", awesome.quit,
     { description = "quit awesome", group = "awesome" }),
   awful.key({ modkey, }, "l", function() awful.tag.incmwfact(0.05) end,
