@@ -4,7 +4,7 @@
 -- If LuaRocks is installed, make sure that packages installed through it are
 -- found (e.g. lgi). If LuaRocks is not installed, do nothing.
 pcall(require, "luarocks.loader")
-
+local home = os.getenv("HOME")
 -- Standard awesome library
 local gears = require("gears")
 local awful = require("awful")
@@ -26,9 +26,9 @@ local hotkeys_popup = require("awful.hotkeys_popup")
 require("awful.hotkeys_popup.keys")
 
 -- Themes define colours, icons, font and wallpapers.
-beautiful.init("/home/waikoo/.config/awesome/themes/mine/theme.lua")
+-- beautiful.init(home .. "/.images/leonardo_awesome2.jpg")
+beautiful.init(home .. "/.config/awesome/themes/mine/theme.lua")
 
--- beautiful.get().wallpaper = "/home/waikoo/.images/leonardo_awesome2.jpg"
 -- Init all modules (You can add/remove active modules here)
 require("modules.auto-start")
 require("modules.sloppy-focus")
@@ -87,3 +87,20 @@ client.connect_signal("manage", function(c)
     awful.placement.no_offscreen(c)
   end
 end)
+
+-- my settings
+
+globalkeys = gears.table.join()
+
+-- Other keybindings...
+local modkey = require('configuration.keys.mod').modKey
+-- Switch all screens to tag 1
+awful.key({ modkey }, "2", function()
+    for s in awful.screen do
+      local tag = s.tags[2] -- Get tag 1
+      if tag then
+        tag:view_only()     -- View the tag on this screen
+      end
+    end
+  end,
+  { description = "view tag 2 on all screens", group = "tag" })
