@@ -26,7 +26,6 @@ local hotkeys_popup = require("awful.hotkeys_popup")
 require("awful.hotkeys_popup.keys")
 
 -- Themes define colours, icons, font and wallpapers.
--- beautiful.init(home .. "/.images/leonardo_awesome2.jpg")
 beautiful.init(home .. "/.config/awesome/themes/mine/theme.lua")
 
 -- Init all modules (You can add/remove active modules here)

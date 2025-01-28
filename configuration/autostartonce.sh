@@ -15,6 +15,7 @@ APPS=(
     # kdeconnect-indicator
     # radeon-profile
     # $HOME/.config/awesomestart
+    picom &
     udiskie
 )
 

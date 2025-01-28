@@ -13,18 +13,93 @@ local tabkey = require('configuration.keys.mod').tabKey
 local controlkey = require('configuration.keys.mod').ctrlKey
 local apps = require('configuration.apps')
 local logout_popup = require("awesome-wm-widgets.logout-popup-widget.logout-popup")
+local naughty = require("naughty")
+local mouse = mouse or require("mouse")
+-- buggy fn start
 
+-- local function switch_to_tag(tag)
+--   return function()
+--     local screen = awful.screen.focused()
+--     local tag_index = tonumber(tag)
+--     if tag_index and screen.tags[tag_index] then
+--       screen.tags[tag_index]:view_only()
+--     end
+--   end
+-- end
+-- NOTE: buggy fn end
+
+
+-- local gears = require("gears")
+-- local mouse = mouse
+
+-- Variable to track the globally focused screen
+local globally_focused_screen = awful.screen.focused()
+
+-- Function to restore focus based on cursor position
+local function restore_focus_under_cursor()
+  local current_screen = mouse.screen -- Get the screen under the cursor
+  if current_screen then
+    -- Focus the screen under the cursor
+    awful.screen.focus(current_screen)
+    globally_focused_screen = current_screen
+  end
+end
+
+-- Function to switch to a tag on all screens while maintaining global screen focus
 local function switch_to_tag(tag)
   return function()
-    local screen = awful.screen.focused()
     local tag_index = tonumber(tag)
-    if tag_index and screen.tags[tag_index] then
-      screen.tags[tag_index]:view_only()
+    if not tag_index then return end
+
+    -- Switch the tag on all screens
+    for s in screen do
+      local tag = s.tags[tag_index]
+      if tag then
+        tag:view_only()
+      end
+    end
+
+    -- Restore focus to the globally focused screen
+    if globally_focused_screen.tags[tag_index] then
+      globally_focused_screen.tags[tag_index]:view_only()
+
+      -- Use a delay to ensure focus remains correct after tag change
+      gears.timer.delayed_call(function()
+        restore_focus_under_cursor()
+      end)
     end
   end
 end
 
--- {{{ Key bindings
+-- Update the globally focused screen when screen focus changes
+screen.connect_signal("property::focused", function(s)
+  print("[DEBUG] Globally focused screen updated:", s.index)
+  globally_focused_screen = s
+end)
+
+-- Signal to restore focus after tag changes
+tag.connect_signal("property::selected", function(t)
+  -- Restore focus to the cursor's screen
+  print("[DEBUG] Tag selected:", t.name, "on screen:", t.screen.index)
+  gears.timer.delayed_call(function()
+    restore_focus_under_cursor()
+  end)
+end)
+
+-- Example keybindings to use this functionality
+for i = 1, 5 do
+  globalkeys = gears.table.join(globalkeys,
+    awful.key({ modkey }, "#" .. i + 5,
+      switch_to_tag(i),
+      { description = "view tag #" .. i .. " on all screens", group = "tag" }
+    )
+  )
+end
+
+
+
+
+-- {{{ NOTE: Key bindings
 globalKeys = gears.table.join(
   awful.key({ modkey, }, "s", hotkeys_popup.show_help,
     { description = "show help", group = "awesome" }),
@@ -77,12 +152,23 @@ globalKeys = gears.table.join(
   awful.key({ modkey }, "#88", function()
       awful.spawn.with_shell("pactl set-default-sink bluez_output.60_C5_E6_42_F0_88.1")
     end,
-    { description = "select headphones as sink", group = "scripts" }),
-  awful.key({ modkey }, "#89", function()
-      awful.spawn.with_shell("bluetoothctl connect 60:C5:E6:42:F0:88")
-    end,
-    { description = "connect to headphones", group = "scripts" }),
+    { description = "select skull as sink", group = "scripts" }),
 
+  awful.key({ modkey }, "#89", function()
+      awful.spawn.with_shell("pactl set-default-sink bluez_output.00_A4_1C_45_B0_4E.1")
+    end,
+    { description = "set sony as default sink", group = "scripts" }),
+
+  awful.key({ modkey }, "1", switch_to_tag("1"),
+    { description = "Switch to tag 1", group = "tag" }),
+  awful.key({ modkey }, "2", switch_to_tag("2"),
+    { description = "Switch to tag 2", group = "tag" }),
+  awful.key({ modkey }, "3", switch_to_tag("3"),
+    { description = "Switch to tag 3", group = "tag" }),
+  awful.key({ modkey }, "4", switch_to_tag("4"),
+    { description = "Switch to tag 4", group = "tag" }),
+  awful.key({ modkey }, "5", switch_to_tag("5"),
+    { description = "Switch to tag 5", group = "tag" }),
   awful.key({ modkey }, "7", switch_to_tag("1"),
     { description = "Switch to tag 1", group = "tag" }),
   awful.key({ modkey }, "8", switch_to_tag("2"),
@@ -96,60 +182,88 @@ globalKeys = gears.table.join(
 
   -- Switch to tag on all screens
 
-  awful.key({ modkey }, "1",
-    function()
-      for s in screen do
-        local tag = screen[s].tags[1]
-        if tag then
-          tag:view_only()
-        end
-      end
-    end,
-    { description = "view tag #1 on all screens", group = "tag" }),
+  -- awful.key({ modkey }, "1",
+  --   function()
+  --     for s in screen do
+  --       local tag = screen[s].tags[1]
+  --       if tag then
+  --         tag:view_only()
+  --       end
+  --     end
+  --   end,
+  --   { description = "view tag #1 on all screens", group = "tag" }),
+  --
+  -- awful.key({ modkey }, "2",
+  --   function()
+  --     for s in screen do
+  --       local tag = screen[s].tags[2]
+  --       if tag then
+  --         tag:view_only()
+  --       end
+  --     end
+  --   end,
+  --   { description = "view tag #2 on all screens", group = "tag" }),
+  --
+  -- awful.key({ modkey }, "3",
+  --   function()
+  --     for s in screen do
+  --       local tag = screen[s].tags[3]
+  --       if tag then
+  --         tag:view_only()
+  --       end
+  --     end
+  --   end,
+  --   { description = "view tag #3 on all screens", group = "tag" }),
+  --
+  -- awful.key({ modkey }, "4",
+  --   function()
+  --     for s in screen do
+  --       local tag = screen[s].tags[4]
+  --       if tag then
+  --         tag:view_only()
+  --       end
+  --     end
+  --   end,
+  --   { description = "view tag #4 on all screens", group = "tag" }),
+  --
+  -- awful.key({ modkey }, "5",
+  --   function()
+  --     for s in screen do
+  --       local tag = screen[s].tags[5]
+  --       if tag then
+  --         tag:view_only()
+  --       end
+  --     end
+  --   end,
+  --   { description = "view tag #5 on all screens", group = "tag" }),
+  --
 
-  awful.key({ modkey }, "2",
-    function()
-      for s in screen do
-        local tag = screen[s].tags[2]
-        if tag then
-          tag:view_only()
-        end
-      end
-    end,
-    { description = "view tag #2 on all screens", group = "tag" }),
 
-  awful.key({ modkey }, "3",
-    function()
-      for s in screen do
-        local tag = screen[s].tags[3]
-        if tag then
-          tag:view_only()
-        end
-      end
-    end,
-    { description = "view tag #3 on all screens", group = "tag" }),
 
-  awful.key({ modkey }, "4",
-    function()
-      for s in screen do
-        local tag = screen[s].tags[4]
-        if tag then
-          tag:view_only()
-        end
-      end
-    end,
-    { description = "view tag #4 on all screens", group = "tag" }),
 
-  awful.key({ modkey }, "5",
-    function()
-      for s in screen do
-        local tag = screen[s].tags[5]
-        if tag then
-          tag:view_only()
-        end
-      end
-    end,
-    { description = "view tag #5 on all screens", group = "tag" }),
+
+
+
+
+  -- Key bindings using the helper function
+  -- awful.key({ modkey }, "1",
+  --   function()
+  --     switch_to_tag(1)
+  --   end,
+  --   { description = "view tag #1 on all screens and preserve focus", group = "tag" }),
+  --
+  -- awful.key({ modkey }, "2",
+  --   function()
+  --     switch_to_tag(2)
+  --   end,
+  --   { description = "view tag #2 on all screens and preserve focus", group = "tag" }),
+  -- awful.key({ modkey }, "3",
+  --   function()
+  --     switch_to_tag(3)
+  --   end,
+  --   { description = "view tag #3 on all screens and preserve focus", group = "tag" }),
+
+  ------------------------------------
 
   awful.key({ modkey, "Shift" }, "Left",
     function()
