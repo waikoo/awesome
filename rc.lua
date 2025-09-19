@@ -103,3 +103,4 @@ awful.key({ modkey }, "2", function()
     end
   end,
   { description = "view tag 2 on all screens", group = "tag" })
+awful.spawn.with_shell("nm-applet")

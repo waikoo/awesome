@@ -115,6 +115,16 @@ globalKeys = gears.table.join(
     s.top_panel.visible = not s.top_panel.visible
   end, { description = "Toggle top_panel visibility", group = "awesome" }),
 
+  -- eyedropper
+  awful.key({ modkey, }, "Print", function()
+    awful.spawn.easy_async_with_shell("xcolor", function(stdout)
+      local color = stdout:gsub("\n", "")
+      awful.spawn("sh -c \"printf '" .. color .. "' | xclip -selection clipboard\"")
+      naughty.notify({ title = "Color copied", text = color })
+    end)
+  end, { description = "eyedropper", group = "awesome" }),
+
+
   -- Open rofi launcher
   awful.key({ 'Mod1' }, "o", function() awful.spawn('rofi -show drun -show-icons') end,
     { description = "open rofi", group = "launcher" }),

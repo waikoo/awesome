@@ -6,7 +6,7 @@ return {
   run_on_start_up = {
 
     -- 'picom --config ' .. filesystem.get_configuration_dir() .. '~/.config/picom/picom.conf',
-    'picom &',
+    -- 'picom &',
     -- 'nm-applet --indicator', -- wifi
     --'blueberry-tray', -- Bluetooth tray icon
     --'xfce4-power-manager', -- Power manager
